@@ -13,7 +13,7 @@
     </v-card-title>
     <v-data-table 
         :headers="headers"
-        :items="reports"
+        :items="builds"
         :search="search"
         :items-per-page="10">
 
@@ -37,9 +37,10 @@
 export default {
   data() {
     return {
+      builds: [],
       search: "",
       headers: [
-        { text: "Number", align: "start", sortable: true, value: "build_number" },
+        { text: "Number", align: "center", sortable: true, value: "build_number" },
         { text: "Type", sortable: true, value: "build_type" },
         { text: "Size", sortable: true, value: "build_size" },
         { text: "Time", sortable: true, value: "build_time" },
@@ -59,6 +60,27 @@ export default {
         },
       ],
     };
+  },
+
+  async created() {
+    try {
+      let res = await this.$http({
+        url: 'http://localhost:3000/builds',
+        method: 'get',
+        timeout: 8000,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      if(res.status == 200){
+          console.log(res.status);
+      }
+      this.builds = res.data;    
+      return res.data;
+    }
+    catch (err) {
+      console.error(err);
+    }
   },
 
   methods: {
